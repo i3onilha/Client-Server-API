@@ -5,7 +5,6 @@ import (
   "io"
   "os"
   "net/http"
-  "context"
   "encoding/json"
   "time"
   "fmt"
@@ -28,16 +27,11 @@ type DollarExchange struct {
   } `json:"USDBRL"`
 }
 
+const urlApi string = "http://10.58.64.197:8090/cotacao"
+
 func main() {
-  ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*300)
-  defer cancel()
-  urlApi := "http://10.58.64.197:8090/cotacao"
-  req, err := http.NewRequestWithContext(ctx, "GET", urlApi, nil)
-  if err != nil {
-    fmt.Println(err.Error())
-    return
-  }
-  res, err := http.DefaultClient.Do(req)
+  c := http.Client{Timeout: time.Millisecond*300}
+  res, err := c.Get(urlApi)
   if err != nil {
     fmt.Println(err.Error())
     return
